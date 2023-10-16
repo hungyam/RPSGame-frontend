@@ -1,38 +1,33 @@
 import * as React from "react"
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+import {ChakraProvider} from "@chakra-ui/react"
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import Home from "./pages/Home";
+import List from "./pages/List";
+import Room from "./pages/Room";
+import theme from "./utils/theme";
+import Login from "./components/Login";
+import {createContext, useState} from "react";
 
-export const App = () => (
-  <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={8}>
-          <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link>
-        </VStack>
-      </Grid>
-    </Box>
-  </ChakraProvider>
-)
+export const UserContext = createContext<{name: string, setName: any}>({name: "", setName: null})
+
+export const App = () => {
+    const [name, setName] = useState<string>("")
+
+    return <ChakraProvider theme={theme}>
+        <UserContext.Provider value={{name: name, setName: setName}}>
+            <Login/>
+            <BrowserRouter>
+                <Router/>
+            </BrowserRouter>
+        </UserContext.Provider>
+    </ChakraProvider>
+}
+
+const Router = () => {
+    return <Routes>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/room/:id' element={<Room/>}/>
+        <Route path='/list' element={<List/>}/>
+    </Routes>
+}
+
